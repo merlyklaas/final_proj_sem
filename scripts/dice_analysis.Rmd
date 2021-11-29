@@ -1,0 +1,97 @@
+---
+title: "final_project"
+author: "Merly Klaas"
+date: "11/18/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(lavaan)
+library(here)
+library(rio)
+```
+
+```{r}
+dat <- import(here("data", "maternal edu.csv"))
+
+meducsd <- dat %>%
+  summarize(mean = mean(value),
+            sd = sd(value))
+```
+
+```{r}
+dice_lower_corr <- '
+1.00,
+.43, 1.00,
+.44,  .40, 1.00,
+.49,  .29,  .44, 1.00,
+.40,  .21,  .31,  .26, 1.00,
+-.26,  .45,  .43,  .39,  .41, 1.00,
+-.27,  .07,  .22,  .22,  .49,  .30, 1.00,
+-.26,  .06,  .31,  .28,  .39,  .46,  .50, 1.00,
+-.22,  .20,  .13,  .15,  .45,  .21,  .14,  .03, 1.00,
+-.17,  .52,  .29,  .29,  .23,  .51,  .06,  .05,  .28, 1.00,
+-.16,  .24,  .21,  .25,  .21,  .21,  .28,  .31,  .16,  .15, 1.00,
+.36, -.24, -.13, -.09, -.47, -.20, -.28, -.06, -.57, -.23, -.22, 1.00
+
+'
+
+dice_sds <- c(1.134, 14.728, 7.888, 16.671, 12.574, .916, .867, .803, .954, .864, .9, 7.881)
+dicedata <- getCov(dice_lower_corr, 
+                    sds = dice_sds,
+                    names = c("meduc", "ealpha", "ephono", "erecep", "eexpr", 
+                              "a1", "a2", "a3", "a4", "a5", "a6", "decod")
+                    )
+```
+
+```{r}
+dice_cfa <- '
+emlit =~ ealpha + ephono + erecep + eexpr 
+atprob =~ a1 + a2 + a3 + a4 + a5 + a6
+
+
+
+atprob ~ emlit
+meduc ~ emlit
+emlit ~ decod
+
+'
+
+dice_cfa_fitted <- cfa(dice_cfa, 
+                        sample.cov = dicedata, 
+                        sample.nobs = 250)
+summary(dice_cfa_fitted, standardized = TRUE,
+        fit.measures = TRUE)
+
+modindices(dice_cfa_fitted)
+```
+
+
+Model 2
+
+```{r}
+dice_cfa <- '
+emlit =~ ealpha + ephono + erecep + eexpr 
+atprob =~ a1 + a2 + a3 + a4 + a5 + a6
+
+ealpha ~~ ephono + erecep + eexpr
+ephono ~~ erecep + eexpr
+erecep ~~ eexpr
+
+a1 ~~ a2 + a3 + a4 + a5 + a6 
+a2 ~~ a3 + a4 + a5 + a6
+a3 ~~ a4 + a5 + a6
+a4 ~~ a5 + a6
+a5 ~~ a6
+
+atprob ~ emlit
+meduc ~ emlit
+emlit ~ decod
+
+
+
+'
+```
+

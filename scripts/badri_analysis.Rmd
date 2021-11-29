@@ -1,0 +1,182 @@
+---
+title: "badri analysis"
+author: "Merly Klaas"
+date: "11/24/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(lavaan)
+```
+
+```{r}
+lower <- '
+6.964
+4.399 6.361
+2.691 2.576 6.647
+1.191 1.080 0.960 1.339
+1.405 1.266 1.067 0.821 1.573
+1.827 1.398 1.122 0.821 0.971 2.804
+1.698 1.319 1.060 0.771 0.940 2.221 2.350
+1.656 1.279 1.073 0.753 0.900 2.197 2.044 2.393
+1.675 1.302 1.075 0.806 0.966 1.974 1.952 1.900 2.826
+1.540 1.219 0.953 0.719 0.874 1.968 1.808 1.825 1.868 2.480
+1.629 1.248 1.030 0.744 0.903 2.224 2.033 2.080 1.956 1.999 2.804
+1.771 1.365 1.084 0.762 0.926 2.224 2.056 2.060 1.930 1.905 2.220 2.802
+0.530 0.491 0.383 0.252 0.262 0.280 0.256 0.259 0.282 0.268 0.257 0.257 0.482
+0.574 0.559 0.426 0.273 0.247 0.236 0.229 0.234 0.240 0.221 0.222 0.239 0.214 0.532
+0.302 0.269 0.200 0.176 0.174 0.165 0.168 0.163 0.181 0.161 0.163 0.166 0.162 0.132 0.334
+
+'
+
+badri.cov <-
+  getCov(lower,
+         names = c("Q9", "Q10", "Q11", "Q17_1", "Q17_19", "Q18_1", "Q18_2", "Q18_3", "Q18_4", "Q18_5", "Q18_6", "Q18_7", "Q13", "Q14", "Q15"))
+
+```
+
+## Model 1 Specifying measurement model
+
+```{r}
+
+badri_cfa_1 <-'
+#specifying measurement model portion
+  home =~ Q13 + Q14 + Q15
+  scho =~ Q18_1 + Q18_2 + Q18_3 + Q18_4 + Q18_5 + Q18_6 + Q18_7 
+  happy =~ Q9 + Q10 + Q17_1 + Q11 + Q17_19
+'
+
+
+
+badri_cfa_fitted_1 <- cfa(badri_cfa_1, 
+                        sample.cov = badri.cov, 
+                        sample.nobs = 14828)
+summary(badri_cfa_fitted_1, standardized = TRUE,
+        fit.measures = TRUE)
+
+modindices(badri_cfa_fitted_1, sort= TRUE)
+```
+
+## Model 2 adding structural path
+  * According to the paper: The steps involved the inclusion of the error covariance between variables, adding paths between latent constructs, and checking for the largest standardized residuals.
+
+```{r}
+badri_cfa_2 <-'
+#specifying measurement model portion
+  home =~ Q13 + Q14 + Q15
+  scho =~ Q18_1 + Q18_2 + Q18_3 + Q18_4 + Q18_5 + Q18_6 + Q18_7 
+  happy =~ Q9 + Q10 +  Q17_1 + Q11 + Q17_19
+  
+#specifying structural model portion  
+happy ~ scho + home
+scho ~ home
+
+#trying to add covariances but it intoroduced error:  lavaan ERROR: could not compute modification indices; information matrix is singular
+# Q9 ~~ Q10 + Q17_1 + Q11 + Q17_19
+# Q10 ~~ Q17_1 + Q11 + Q17_19
+# Q17_1 ~~ Q11 + Q17_19
+# Q11 ~~ Q17_19
+# 
+# 
+# Q18_1 ~~ Q18_2 + Q18_3 + Q18_4 + Q18_5 + Q18_6 + Q18_7
+# Q18_2 ~~ Q18_3 + Q18_4 + Q18_5 + Q18_6 + Q18_7
+# Q18_3 ~~ Q18_4 + Q18_5 + Q18_6 + Q18_7
+# Q18_4 ~~ Q18_5 + Q18_6 + Q18_7
+# Q18_5 ~~ Q18_6 + Q18_7
+# Q18_6 ~~ Q18_7
+# 
+# Q13 ~~ Q14 + Q15
+# Q14 ~~ Q15
+
+'
+
+
+
+badri_cfa_fitted_2 <- cfa(badri_cfa_2, 
+                        sample.cov = badri.cov, 
+                        sample.nobs = 14828)
+summary(badri_cfa_fitted_2, standardized = TRUE,
+        fit.measures = TRUE)
+
+fit_stats <- fitmeasures(badri_cfa_fitted_2)
+modindices(badri_cfa_fitted_2, sort= TRUE)
+
+
+```
+
+## Model 3 modification based on modification indices
+
+
+
+```{r}
+badri_cfa_3 <-'
+#specifying measurement model portion
+  home =~ Q13 + Q14 + Q15
+  scho =~ Q18_1 + Q18_2 + Q18_3 + Q18_4 + Q18_5 + Q18_6 + Q18_7 
+  happy =~ Q9 + Q10 + Q17_1 + Q11 + Q17_19
+  
+#specifying structural model portion  
+happy ~ scho + home
+scho ~ home
+
+#covariances 
+
+Q9 ~~ Q10 
+Q17_1 ~~ Q17_19
+Q9 ~~ Q17_1
+Q9 ~~ Q17_19
+Q10 ~~ Q17_1
+Q10 ~~ Q17_19
+
+'
+
+
+
+badri_cfa_fitted_3 <- cfa(badri_cfa_3, 
+                        sample.cov = badri.cov, 
+                        sample.nobs = 14828)
+summary(badri_cfa_fitted_3, standardized = TRUE,
+        fit.measures = TRUE)
+
+fit_stats <- fitmeasures(badri_cfa_fitted_3)
+modindices(badri_cfa_fitted_3, sort= TRUE)
+
+```
+
+## Model 4 Modification : Experience at school is impacted by students' experience at home and happiness
+
+```{r}
+badri_cfa_4 <-'
+#specifying measurement model portion
+  home =~ Q13 + Q14 + Q15
+  scho =~ Q18_1 + Q18_2 + Q18_3 + Q18_4 + Q18_5 + Q18_6 + Q18_7 
+  happy =~ Q9 + Q10 + Q17_1 + Q11 + Q17_19
+  
+#specifying structural model portion  
+scho ~ happy + home
+happy ~ home
+
+#covariances 
+Q9 ~~ Q10 
+Q17_1 ~~ Q17_19
+Q9 ~~ Q17_1
+Q9 ~~ Q17_19
+Q10 ~~ Q17_1
+Q10 ~~ Q17_19
+
+'
+
+
+
+badri_cfa_fitted_4 <- cfa(badri_cfa_4, 
+                        sample.cov = badri.cov, 
+                        sample.nobs = 14828)
+summary(badri_cfa_fitted_4, standardized = TRUE,
+        fit.measures = TRUE)
+
+fit_stats <- fitmeasures(badri_cfa_fitted_4)
+
+
+```
+
