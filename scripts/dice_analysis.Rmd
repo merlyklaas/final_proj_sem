@@ -1,9 +1,17 @@
 ---
-title: "final_project"
+title: \vspace{3in} "Final Project PSY 610 Structural Equation Modeling"
+subtitle: "A Structural Model of The Effects of Preschool Attention on Kindergarten Literacy"
 author: "Merly Klaas"
-date: "11/18/2021"
-output: html_document
+output:
+  pdf_document:
+    toc_depth: 3
+    highlight: tango
+urlcolor: blue
+bibliography: reference.bib 
 ---
+
+\newpage
+\tableofcontents
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -11,9 +19,160 @@ library(dplyr)
 library(lavaan)
 library(here)
 library(rio)
+library(performance)
 ```
 
+\newpage # Orientation 
+The paper I analyze for this project examined the influence of attention in prekindergarten on kindergarten decoding abilities in kindergarten. This study argued that early attention problems in prekindergarten may influence the acquisition of emergent literacy skills including alphabetic knowledge, phonological awareness, and receptive and expressive vocabulary with decoding as an outcome. In addition, Maternal Education was included in the model as evidence supports it relates to early experiences with prints that accounts for differences in reading at school entry. 
+
+Participants were 250 children attending public, lottery-funded prekindergarten in 26 classrooms in 18 schools from three urban and metropolitan counties in northeast Georgia. 
+
+
+For this study, the authors used the following measurements:
+
+__1. Attention Problem__ : An experimental short form of the BASC Teacher Rating Scale- Preschool (TRS-P, Reynolds & Kamphaus, 1992) called the BASC Screener (Yanosky, 2005; Yanosky et al., 2011). There were 6-items with highest loading on attention problem included in the model. They were measuring issues of attention shifting, attention span, concentration, listening attentively, listening to directions, and distraction.
+
+__2. Emergent Literacy:__ 
+
+ * Alphabetic knowledge was measured through an experimenter-developed alphabetic knowledge test.
+ 
+ * Phonological awareness was measured by a subset of items from the Phonological Awareness Test (PAT, Robertson & Salter, 1997).
+ 
+ * Receptive vocabulary was assessed using the Peabody Picture Vocabulary Test- III (PPVT-III, Dunn & Dunn, 1997).
+ 
+ * The Expressive Vocabulary Test (EVT, Williams, 1997) was administered to evaluate children’s expressive vocabulary knowledge. 
+
+__3. Kindergarten Reading Ability__
+Kindergarten reading ability was assessed using The Early Decoding Test, which is an experimenter-constructed brief assessment designed to identify early readers (Schwanenflugel et al., 2010).
+
+
+__4. Maternal Education__
+Maternal Education was measured by an open-ended question:_‘What is the last grade that you completed in school?’_ Responses were coded for this study, with 3% completing middle school, 13% high school, 54% completing high school, 12% some college, 12% Bachelors degree, and 6% Masters degree or higher.
+
+
+Emergent Literacy was the mediator of Attention Problem and Attention Problem to Decoding skill in Kindergarten.
+
+
+\newpage # Reproducing the model: 
+_Write a narrative describing the process of reproducing the model. How well was the model described in the paper? Could you reproduce it from the main paper itself? Were there supplemental materials that you needed to use? Were you able to get the same numbers published in the article? Was anything missing? Would you reach the same conclusions that the authors did?_
+
+
+The three nested models were clearly described in the paper. Here are some steps the authors reported on the paper for their three models:
+
+ * __The First Model__ was a measurement model, which allowed for examination of interrelationships between the items and scores used in the full structural model. Model 1 was used the measurement model to examine how well the emergent literacy dimensions measured the latent factor of emergent literacy and how well the attention items from the BASC Screener measured a latent factor of attention.
+
+ * __The Second Model__ was the full structural model with all latent variables were considered observed and part of structural relationships. The structural model was recursive, with no feedback loops, which was a sufficient condition for identification.
+
+ * __The Third Model__ was nested from the full structural model with the path from attention to literacy set to zero.
+  
+I was able to reproduce the models described in the paper using correlation table and standard deviations reported for each variables except for Maternity Education. For this, I had to manually calculate the standard deviation for Maternal Education using information reported in the method section about the percentage of each maternal education category for 250 respondents (3% completing middle school, 13% high school, 54% completing high school, 12% some college, 12% Bachelors degree, and 6% Masters degree) to complete the data.
+
+I run all there nested models described in the paper including the measurement model, full structural model, and model 3 in which path from attention to literacy set to zero. 
+
+_In the measurement model (Model 1)_, two latent variables were measured by each observed items using the latent variable definition (=~) operator in Lavaan. 
+
+The Attention Problems manifested in six observed variables:
+
+ * Item 1 (a1)
+ 
+ * Item 2 (a2)
+ 
+ * Item 3 (a3)
+ 
+ * Item 4 (a4)
+ 
+ * Item 5 (a5)
+ 
+ * Item 6 (a5)
+
+Emergent Literacy was manifested thorough four observed variables: 
+
+ * Alphabetic Knowledge (ealpha)
+ 
+ * Phonological Awareness (ephono)
+ 
+ * Receptive Vocabulary (erecep)
+ 
+ * Expressive Vocabulary (eexpr)
+  
+  I was able to get relatively close numbers published in the article including the fit statistics and standardized estimates for each latent variables. However, I did not get the same degree of freedom for Model 1 (Measurement Model). In the paper, Model 1 reported _df_ = 50, while my model 1 _df_  = 45. The paper explained that model 1 was used examine how well the emergent literacy dimensions measured the latent factor of emergent literacy and how well the attention items from the BASC Screener measured a latent factor of attention. I suspected that there were some modification being done but was not reported in the paper. 
+
+_In the Full Strucural Model (Model 2)_, I added the regression path nested in Model 1. According to the graph, Emergent Literacy variable was fully mediated all relationships among variables. Maternal Education as one of the exogenous variables and Decoding as the endogenous variable were added to the model. Below is the regression paths in this model:   
+
+  * Attention Problems to Emergent Literacy: __emlit ~ atprob__
+  * Maternal Education to Emergent Literacy: __emlit ~ meduc__ 
+  * Emergent Literacy to Decoding Skill: __decod ~ emlit__
+
+I also added a covariance between two exogenous variables as reflected in the graph. 
+
+ * Maternal Education and Attention Problems: __meduc ~~ atprob__
+
+The only graph included in this paper was representing the Full Structural Model (Model 2). 
+
+There are some findings worth mentioning regarding this process:
+
+a. The paper used estimates from Std.lv column instead of Std.all column. The std.lv column shows results that are standardized so that the latent variables have a variance of one. It is more common to see std.all estimates being reported instead of std.lv. There is no explanation for this decision in the paper. 
+
+b. The estimate coefficient for attention problem latent variable to emergent literacy latent variable is reported as .26. I believe this is a misprint because the relationship between these two variables should be negative as the higher attention problem, the lower the emergent literacy score and vice versa. The estimate I got for this path is -.28  
+
+c. The loadings for item5 and item6 in attention problem variables reported were possible swapped. The paper reported loading for item5 = .68 and item6 = .62, while I got factor loadings for item5 = .62 and item6 = .68 on Attention Problem.
+
+d. Item loadings on Emergent Literacy variable were moderately high around 0.69 - 0.73. The weakest loading was item receptive vocabulary: 0.69 and the highest loading was expressice vocabulary: 0.73. 
+
+e. Item loadings for attention shifting (a1), attention span (a2), and listening attentively (a4) were relatively high above 0.91 while the other three items concentration (a3), listening to direction (a5) and distraction (a6) were moderately high around 0.72 - 0.77. 
+
+Lastly, Model 3 was run to recheck the the fit of the model after attention problem path to literacy was set to zero. With only Maternal Education variable, the fit statistics got worse. The author, then, conclude that individual differences in attention contributes more to literacy compared to maternal education. 
+
+
+Considering these results, I would have the same conclusion with some extensions. In the following model 4, I would like to add the covariance between observed variables as suggested by the modification indices to improve the fit statistics and try to add direct path from Attention Problems to Decoding Skill. 
+
+
+\newpage # Extending the model: 
+_Describe the other model of interest that you ran. What do you conclude based on it?_
+
+I decided to test two extended models.  
+
+First, in this extended model (Model 4a), I added covariances between items on Attention Problem Latent Variable as suggested by the modification indices analysis to improve the fit statistics of the model.
+
+Covariances between items on Attention Problems:
+
+ * Item 5 Listening to Direction to Item 6 Distraction: __a5 ~~ a6__
+ 
+ * Item 2 Attention Span to Concentration: __a2 ~~ a3__
+ 
+ * Item 2 Attention Span to Distraction: __a2 ~~ a6__
+
+With this modification, the fit statistics are improved. The proposed model was tested using the Lavaan Package R. Using both Kline (2005) and Hu and Bentler’s (1999) guidelines for evaluating overall model fit, an SRMR<.08, an NNFI > .95, and a CFI > .95 indicated an adequate model fit to the observed data. Model 4a SMSR =  0.038, NNFI = 0.967, CFI =  0.975.
+
+In the second extended model (Model 4b), I added direct path from attention problem to decoding. I hypothesized that children with attention problem in preschool will also struggle to read in the kindergarten without any mediator.
+
+ * Attention Span to Decoding: __decod ~ atprob__
+ 
+However, the fit statistics were not improved, instead it got worse.  Model 4b SMSR = 0.043, NNFI = 0.924, CFI = 0.941.
+
+This means the full mediation model with covariances between items on Attention Problems variable fits the data better (Model2) compared to other models. 
+
+
+\newpage # Conclusion: 
+
+This study sheds light on the importance of attention in children literacy development in addition to the more common foundation pre-literacy skills such as alphabetic knowledge, phonological awareness, receptive and expressive vocabulary.  Another study @miller2014behavioral also found that there is no direct relationship between attention problem and reading comprehension. Rather the relationship was mediated by reading growth. The common rule of thumb suggests that the average of children attention span could be calculated by multiplying child age with 2 or 3. For example, for three year old toddler, the average attention span is between 6 to 9 minutes and for five year old child, the average attention span is between 10 - 15 minutes. However, a more rigorous measurement should be done to measure children attention span. Children with high attention problems need additional targeted activities to improve their attention. Thus, teachers and caregivers need to be equipped on how to support children attention development that appropriate to their age. 
+
+The structural equation modeling analysis from this study about preschool attention and kindergarten literacy @dice2012structural can easily be reproduced. The authors did a great job in providing necessary information including the correlation table, SDs, and detailed explanation about how they run the models presented in this paper. To improve, the authors could describe more about the modification steps taken especially for Model 1. 
+
+
+
+
+
+__A link or copy of the original [journal article](https://link.springer.com/content/pdf/10.1007/s11145-011-9354-3.pdf)__
+
+This analysis used @lavaan, @dplyr, @riopackage, @herepackage packages from R Software. 
+
+
+
+\newpage # Appendix
+
 ```{r}
+# calculating SD for Maternal Education
 dat <- import(here("data", "maternal edu.csv"))
 
 meducsd <- dat %>%
@@ -25,20 +184,20 @@ meducsd <- dat %>%
 dice_lower_corr <- '
 1.00,
 .43, 1.00,
-.44,  .40, 1.00,
-.49,  .29,  .44, 1.00,
-.40,  .21,  .31,  .26, 1.00,
--.26,  .45,  .43,  .39,  .41, 1.00,
--.27,  .07,  .22,  .22,  .49,  .30, 1.00,
--.26,  .06,  .31,  .28,  .39,  .46,  .50, 1.00,
--.22,  .20,  .13,  .15,  .45,  .21,  .14,  .03, 1.00,
--.17,  .52,  .29,  .29,  .23,  .51,  .06,  .05,  .28, 1.00,
--.16,  .24,  .21,  .25,  .21,  .21,  .28,  .31,  .16,  .15, 1.00,
-.36, -.24, -.13, -.09, -.47, -.20, -.28, -.06, -.57, -.23, -.22, 1.00
+.44, .49, 1.00,
+.49, .46, .49, 1.00,
+.40, .50, .64, .49, 1.00,
+-.26, -.31, -.27, -.30, -.31, 1.00,
+-.27, -.29, -.23, -.25, -.31, .84, 1.00,
+-.26, -.24, -.21, -.23, -.27, .68, .76, 1.00,
+-.22, -.27, -.20, -.23, -.29, .85, .85, .67, 1.00,
+-.17, -.20, -.12, -.15, -.22, .65, .62, .58, .65, 1.00,
+-.16, -.24, -.24, -.24, -.30, .69, .66, .58, .70, .73, 1.00,
+.36, .62, .41, .51, .44, -.30, -.27, -.29, -.27, -.24, -.30, 1.00
 
 '
 
-dice_sds <- c(1.134, 14.728, 7.888, 16.671, 12.574, .916, .867, .803, .954, .864, .9, 7.881)
+dice_sds <- c(1.134, 14.728, 7.888, 16.671, 12.574, .916, .867, .803, .954, .864, .900, 7.881)
 dicedata <- getCov(dice_lower_corr, 
                     sds = dice_sds,
                     names = c("meduc", "ealpha", "ephono", "erecep", "eexpr", 
@@ -46,52 +205,142 @@ dicedata <- getCov(dice_lower_corr,
                     )
 ```
 
-```{r}
-dice_cfa <- '
+# Model 1 Measurement Model
+
+```{r echo=TRUE}
+mod1_cfa <- '
 emlit =~ ealpha + ephono + erecep + eexpr 
 atprob =~ a1 + a2 + a3 + a4 + a5 + a6
 
-
-
-atprob ~ emlit
-meduc ~ emlit
-emlit ~ decod
-
 '
 
-dice_cfa_fitted <- cfa(dice_cfa, 
+mod1_fitted <- cfa(mod1_cfa, 
                         sample.cov = dicedata, 
                         sample.nobs = 250)
-summary(dice_cfa_fitted, standardized = TRUE,
+summary(mod1_fitted, standardized = TRUE,
         fit.measures = TRUE)
 
-modindices(dice_cfa_fitted)
+modindices(mod1_fitted, sort = TRUE, min = 10 )
 ```
 
 
-Model 2
+# Model 2 Full Structural Model
 
-```{r}
-dice_cfa <- '
+```{r echo=TRUE}
+mod2_cfa <- '
 emlit =~ ealpha + ephono + erecep + eexpr 
 atprob =~ a1 + a2 + a3 + a4 + a5 + a6
 
-ealpha ~~ ephono + erecep + eexpr
-ephono ~~ erecep + eexpr
-erecep ~~ eexpr
+emlit ~ atprob
+emlit ~ meduc
+decod ~ emlit
 
-a1 ~~ a2 + a3 + a4 + a5 + a6 
-a2 ~~ a3 + a4 + a5 + a6
-a3 ~~ a4 + a5 + a6
-a4 ~~ a5 + a6
-a5 ~~ a6
-
-atprob ~ emlit
-meduc ~ emlit
-emlit ~ decod
-
-
+meduc ~~ atprob
 
 '
+
+
+mod2_fitted <- cfa(mod2_cfa, 
+                        sample.cov = dicedata, 
+                        sample.nobs = 250)
+summary(mod2_fitted, standardized = TRUE,
+        fit.measures = TRUE)
+model_performance(mod2_fitted)
+
+modindices(mod2_fitted, sort = TRUE, 
+           min = 10)
+
 ```
 
+# Model 3 Attention to emergent literacy path set to 0
+
+```{r}
+mod3_cfa <- '
+emlit =~ ealpha + ephono + erecep + eexpr 
+atprob =~ a1 + a2 + a3 + a4 + a5 + a6
+
+emlit ~ 0*atprob
+emlit ~ meduc
+decod ~ emlit
+
+meduc ~~ atprob
+
+'
+mod3_fitted <- cfa(mod3_cfa, 
+                        sample.cov = dicedata, 
+                        sample.nobs = 250)
+summary(mod3_fitted, standardized = TRUE,
+        fit.measures = TRUE)
+
+modindices(mod3_fitted,
+           sort = TRUE,
+           min = 20)
+
+```
+
+
+
+# Model 4a Modification based on Modindices
+
+```{r echo=TRUE}
+mod4a_cfa <- '
+emlit =~ ealpha + ephono + erecep + eexpr 
+atprob =~ a1 + a2 + a3 + a4 + a5 + a6
+
+emlit ~ atprob
+emlit ~ meduc
+decod ~ emlit
+
+meduc ~~ atprob
+
+#covariances between items on Attention Problem
+a5 ~~ a6
+a2 ~~ a3
+a2 ~~ a6
+
+'
+
+
+mod4a_fitted <- cfa(mod4a_cfa, 
+                        sample.cov = dicedata, 
+                        sample.nobs = 250)
+summary(mod4a_fitted, standardized = TRUE,
+        fit.measures = TRUE)
+model_performance(mod4a_fitted)
+
+anova(mod2_fitted, mod4a_fitted)
+```
+
+# Model 4b Adding direct Path from Attention Problems to Decoding Skill
+
+```{r echo=TRUE}
+mod4b_cfa <- '
+emlit =~ ealpha + ephono + erecep + eexpr 
+atprob =~ a1 + a2 + a3 + a4 + a5 + a6
+
+emlit ~ atprob
+emlit ~ meduc
+decod ~ emlit
+
+meduc ~~ atprob
+
+#direct path from attention problems to decoding
+decod ~ atprob
+
+'
+
+
+mod4b_fitted <- cfa(mod4b_cfa, 
+                        sample.cov = dicedata, 
+                        sample.nobs = 250)
+summary(mod4b_fitted, standardized = TRUE,
+        fit.measures = TRUE)
+model_performance(mod4b_fitted)
+
+anova(mod2_fitted, mod4b_fitted)
+
+
+```
+```
+
+\newpage # References 
