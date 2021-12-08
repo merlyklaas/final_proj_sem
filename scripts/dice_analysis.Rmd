@@ -23,7 +23,7 @@ library(performance)
 ```
 
 \newpage # Orientation 
-The paper I analyze for this project examined the influence of attention in prekindergarten on kindergarten decoding abilities in kindergarten. This study argued that early attention problems in prekindergarten may influence the acquisition of emergent literacy skills including alphabetic knowledge, phonological awareness, and receptive and expressive vocabulary with decoding as an outcome. In addition, Maternal Education was included in the model as evidence supports it relates to early experiences with prints that accounts for differences in reading at school entry. 
+The paper I use for this project examined the influence of attention in prekindergarten on kindergarten decoding abilities in kindergarten. This study argued that early attention problems in prekindergarten may influence the acquisition of emergent literacy skills including alphabetic knowledge, phonological awareness, and receptive and expressive vocabulary with decoding as an outcome. In addition, Maternal Education was included in the model because it relates to early experiences with prints indicator that accounts for differences in reading at school entry. 
 
 Participants were 250 children attending public, lottery-funded prekindergarten in 26 classrooms in 18 schools from three urban and metropolitan counties in northeast Georgia. 
 
@@ -65,9 +65,9 @@ The three nested models were clearly described in the paper. Here are some steps
 
  * __The Third Model__ was nested from the full structural model with the path from attention to literacy set to zero.
   
-I was able to reproduce the models described in the paper using correlation table and standard deviations reported for each variables except for Maternity Education. For this, I had to manually calculate the standard deviation for Maternal Education using information reported in the method section about the percentage of each maternal education category for 250 respondents (3% completing middle school, 13% high school, 54% completing high school, 12% some college, 12% Bachelors degree, and 6% Masters degree) to complete the data.
+I was able to reproduce the models described in the paper using correlation table and standard deviations reported for each variable except for Maternity Education. For this, I had to manually calculate the standard deviation for Maternal Education using information reported in the method section about the percentage of each maternal education category for 250 respondents (3% completing middle school, 13% high school, 54% completing high school, 12% some college, 12% Bachelors degree, and 6% Masters degree) to complete the data.
 
-I run all there nested models described in the paper including the measurement model, full structural model, and model 3 in which path from attention to literacy set to zero. 
+I run all three nested models described in the paper including the measurement model, full structural model, and model 3 in which path from attention to literacy set to zero. 
 
 _In the measurement model (Model 1)_, two latent variables were measured by each observed items using the latent variable definition (=~) operator in Lavaan. 
 
@@ -95,9 +95,9 @@ Emergent Literacy was manifested thorough four observed variables:
  
  * Expressive Vocabulary (eexpr)
   
-  I was able to get relatively close numbers published in the article including the fit statistics and standardized estimates for each latent variables. However, I did not get the same degree of freedom for Model 1 (Measurement Model). In the paper, Model 1 reported _df_ = 50, while my model 1 _df_  = 45. The paper explained that model 1 was used examine how well the emergent literacy dimensions measured the latent factor of emergent literacy and how well the attention items from the BASC Screener measured a latent factor of attention. I suspected that there were some modification being done but was not reported in the paper. 
+  I was able to get relatively close numbers published in the article including the fit statistics and standardized estimates for each latent variable. However, I did not get the same degree of freedom for Model 1 (Measurement Model). In the paper, Model 1 reported _df_ = 50, while my model 1 _df_  = 45. The paper explained that model 1 was used examine how well the emergent literacy dimensions measured the latent factor of emergent literacy and how well the attention items from the BASC Screener measured a latent factor of attention. I suspected that there were some modifications being done but was not specifically reported in the paper. However, since the focus of this analysis is to reproduce the Full Structural Model, further investigation is considered unnecessary. 
 
-_In the Full Strucural Model (Model 2)_, I added the regression path nested in Model 1. According to the graph, Emergent Literacy variable was fully mediated all relationships among variables. Maternal Education as one of the exogenous variables and Decoding as the endogenous variable were added to the model. Below is the regression paths in this model:   
+_In the Full Strucural Model (Model 2)_, I added the regression path nested in Model 1. According to the graph, Emergent Literacy variable was fully mediated all relationships among variables. Maternal Education as one of the exogenous variables and Decoding as the endogenous variable were added to the model. Below are the regression paths in this model:   
 
   * Attention Problems to Emergent Literacy: __emlit ~ atprob__
   * Maternal Education to Emergent Literacy: __emlit ~ meduc__ 
@@ -117,12 +117,11 @@ b. The estimate coefficient for attention problem latent variable to emergent li
 
 c. The loadings for item5 and item6 in attention problem variables reported were possible swapped. The paper reported loading for item5 = .68 and item6 = .62, while I got factor loadings for item5 = .62 and item6 = .68 on Attention Problem.
 
-d. Item loadings on Emergent Literacy variable were moderately high around 0.69 - 0.73. The weakest loading was item receptive vocabulary: 0.69 and the highest loading was expressice vocabulary: 0.73. 
+d. Item loadings on Emergent Literacy variable were moderately high around 0.69 - 0.73. The weakest loading was item receptive vocabulary: 0.69 and the highest loading was expressive vocabulary: 0.73. 
 
 e. Item loadings for attention shifting (a1), attention span (a2), and listening attentively (a4) were relatively high above 0.91 while the other three items concentration (a3), listening to direction (a5) and distraction (a6) were moderately high around 0.72 - 0.77. 
 
-Lastly, Model 3 was run to recheck the the fit of the model after attention problem path to literacy was set to zero. With only Maternal Education variable, the fit statistics got worse. The author, then, conclude that individual differences in attention contributes more to literacy compared to maternal education. 
-
+Lastly, Model 3 was run to recheck the fit of the model after attention problem path to literacy was set to zero. With only Maternal Education variable, the fit statistics got worse. The author, then, conclude that individual differences in attention contributes more to literacy compared to maternal education. 
 
 Considering these results, I would have the same conclusion with some extensions. In the following model 4, I would like to add the covariance between observed variables as suggested by the modification indices to improve the fit statistics and try to add direct path from Attention Problems to Decoding Skill. 
 
@@ -142,22 +141,31 @@ Covariances between items on Attention Problems:
  
  * Item 2 Attention Span to Distraction: __a2 ~~ a6__
 
-With this modification, the fit statistics are improved. The proposed model was tested using the Lavaan Package R. Using both Kline (2005) and Hu and Bentler’s (1999) guidelines for evaluating overall model fit, an SRMR<.08, an NNFI > .95, and a CFI > .95 indicated an adequate model fit to the observed data. Model 4a SMSR =  0.038, NNFI = 0.967, CFI =  0.975.
+With this modification, the fit statistics are improved. The proposed model was tested using the Lavaan Package R. Using both Kline (2005) and Hu and Bentler’s (1999) guidelines for evaluating overall model fit, an SRMR<.08, an NNFI > .95, and a CFI > .95 indicated an adequate model fit to the observed data. Model 4a df = 49, SMSR =  0.038, NNFI = 0.967, CFI =  0.975.
 
 In the second extended model (Model 4b), I added direct path from attention problem to decoding. I hypothesized that children with attention problem in preschool will also struggle to read in the kindergarten without any mediator.
 
  * Attention Span to Decoding: __decod ~ atprob__
  
-However, the fit statistics were not improved, instead it got worse.  Model 4b SMSR = 0.043, NNFI = 0.924, CFI = 0.941.
+However, the fit statistics were not improved, instead it got worse. df = 51, Model 4b SMSR = 0.043, NNFI = 0.924, CFI = 0.941.
 
-This means the full mediation model with covariances between items on Attention Problems variable fits the data better (Model2) compared to other models. 
+The results of this reproduced analysis are presented in the following table:
+
+```{r echo=FALSE}
+fit <- import(here("data", "Fit_indices.csv")) %>% 
+  knitr::kable(
+    caption = "Fit Indices of the Reproduced Analysis Models"
+  )
+fit
+```
+This means the full mediation model with covariances between items on Attention Problems variable (Model 2) fits the data better compared to Model 4b where direct path from attention problems to decoding was added. Furthermore, __Model 4a__, where covariances between items on Attention Problems were added, fits the data better compared to all other models.
 
 
 \newpage # Conclusion: 
 
-This study sheds light on the importance of attention in children literacy development in addition to the more common foundation pre-literacy skills such as alphabetic knowledge, phonological awareness, receptive and expressive vocabulary.  Another study @miller2014behavioral also found that there is no direct relationship between attention problem and reading comprehension. Rather the relationship was mediated by reading growth. The common rule of thumb suggests that the average of children attention span could be calculated by multiplying child age with 2 or 3. For example, for three year old toddler, the average attention span is between 6 to 9 minutes and for five year old child, the average attention span is between 10 - 15 minutes. However, a more rigorous measurement should be done to measure children attention span. Children with high attention problems need additional targeted activities to improve their attention. Thus, teachers and caregivers need to be equipped on how to support children attention development that appropriate to their age. 
+This study sheds light on the importance of attention in children literacy development in addition to the more common foundation pre-literacy skills such as alphabetic knowledge, phonological awareness, receptive and expressive vocabulary.  Another study @miller2014behavioral also found that there is no direct relationship between attention problem and reading comprehension. Rather the relationship was mediated by reading growth. The common rule of thumb suggests that the average of children attention span could be calculated by multiplying child age with 2 or 3. For example, for three-year-old toddler, the average attention span is between 6 to 9 minutes and for five-year-old child, the average attention span is between 10 - 15 minutes. However, a more rigorous measurement should be done to measure children attention span. Children with high attention problems need additional targeted activities to improve their attention. Thus, teachers and caregivers need to be equipped on how to support children attention development that appropriate to their age. 
 
-The structural equation modeling analysis from this study about preschool attention and kindergarten literacy @dice2012structural can easily be reproduced. The authors did a great job in providing necessary information including the correlation table, SDs, and detailed explanation about how they run the models presented in this paper. To improve, the authors could describe more about the modification steps taken especially for Model 1. 
+The structural equation modeling analysis from this study about preschool attention and kindergarten literacy @dice2012structural can easily be reproduced. The authors did a great job in providing necessary information including the correlation table, SDs, and detailed explanation about how they run the models presented in this paper. I was able to reproduce the analysis with the statistical results relatively close to match the numbers reported in the paper for the Full Structural Model (Model 2). There were slightly differences in the decimal points, however, this is acceptable because only the correlation matrix instead of raw data was used for this analysis. To improve, the authors could describe more about the modification steps taken especially for Model 1. 
 
 
 

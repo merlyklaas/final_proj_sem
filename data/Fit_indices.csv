@@ -1,0 +1,6 @@
+﻿Model ,df,SRMR,NNFI,CFI
+1. Measurement Model,45,0.041,0.96,0.97
+2. Full Structural Model,52,0.044,0.93,0.94
+3. Attention path set to 0,53,0.1,0.91,0.93
+4. Model 4a,49,0.038,0.97,0.97
+5. Model 4b,51,0.043,0.92,0.94
